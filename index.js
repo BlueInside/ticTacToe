@@ -1,45 +1,17 @@
 const Gameboard = (() => {
   const _board = ["", "", "", "", "", "", "", "", ""];
-  const markTile = (mark, index) => {
+
+  const setBoard = (mark, index) => {
     _board[index] = mark;
   };
+
   const getBoard = () => _board;
+
   return {
-    markTile,
+    setBoard,
     getBoard,
   };
 })();
-
-const DisplayController = (() => {
-  const _board = document.querySelector(".game-board");
-
-  let _tiles = null;
-
-  const _listenOnTiles = () => {
-    if (!_tiles) _tiles = document.querySelectorAll(".square");
-    _tiles.forEach((tile, index) =>
-      tile.addEventListener("click", function onTileClick(e) {
-        console.log(index);
-      })
-    );
-  };
-  function _populateBoard(element, index) {
-    const tile = document.createElement("div");
-    tile.classList.add("square");
-    tile.dataset.index = index;
-    tile.innerHTML = `${element}`;
-    _board.appendChild(tile);
-  }
-  const setUpBoard = () => {
-    renderBoardContent(Gameboard.getBoard());
-    _listenOnTiles();
-  };
-  const renderBoardContent = (arr) => {
-    arr.forEach((e, i) => _populateBoard(e, i));
-  };
-  return { renderBoardContent, setUpBoard };
-})();
-
 const Player = (mark, name) => {
   return { mark, name };
 };
@@ -47,9 +19,48 @@ const Player = (mark, name) => {
 const Game = (() => {
   const _player1 = Player("X", "player1");
   const _player2 = Player("0", "player2");
-
-  const playRound = [];
-  return { playRound };
+  const _gameOver = false;
+  let currentPlayer = _player1;
+  // we'll have buttons that let players type in names and show who's move
+  const playGame = (player1, player2) => {
+    // while(!gameOver)
+    {
+    }
+  };
+  return { currentPlayer };
 })();
 
-DisplayController.setUpBoard();
+const DisplayController = (() => {
+  const _board = document.querySelector(".game-board");
+  const player = Game.currentPlayer;
+  const _listenOnTiles = () => {
+    const tiles = document.querySelectorAll(".square");
+    tiles.forEach((tile, index) =>
+      tile.addEventListener("click", function onTileClick() {
+        Gameboard.setBoard(player.mark, index);
+        updateBoard();
+        console.log(Gameboard.getBoard());
+      })
+    );
+  };
+
+  function _populateBoard(element, index) {
+    //refresh board on first iteration
+    if (index === 0) _board.innerHTML = "";
+    const tile = document.createElement("div");
+    tile.classList.add("square");
+    tile.dataset.index = index;
+    tile.innerHTML = `${element}`;
+    _board.appendChild(tile);
+  }
+
+  const updateBoard = () => {
+    const board = Gameboard.getBoard();
+    board.forEach((e, i) => _populateBoard(e, i));
+    _listenOnTiles();
+  };
+
+  return { updateBoard };
+})();
+
+DisplayController.updateBoard();
