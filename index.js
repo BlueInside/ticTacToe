@@ -40,6 +40,9 @@ const Game = (() => {
       }
     }
   }
+  function isGameOver() {
+    return _gameOver;
+  }
   const checkForWinner = () => {
     const board = Gameboard.getBoard();
     //Check for winner in tic tac toe game;
@@ -64,7 +67,6 @@ const Game = (() => {
     ];
     _checkAllRows(allRows, "X");
     _checkAllRows(allRows, "O");
-    return _gameOver;
   };
 
   const checkBoardState = () => {
@@ -85,7 +87,6 @@ const Game = (() => {
     const { updateScoreBoard } = DisplayController;
     if (_gameOver) {
       updateScoreBoard(_currentPlayer);
-      startGame();
     }
   };
 
@@ -108,6 +109,7 @@ const Game = (() => {
     checkBoardState,
     checkForWinner,
     endGame,
+    isGameOver,
   };
 })();
 
@@ -119,21 +121,28 @@ const DisplayController = (() => {
     checkBoardState,
     checkForWinner,
     endGame,
+    isGameOver,
   } = Game;
   const { setBoard, getBoard } = Gameboard;
   let _currentPlayer = null;
+  let _isWinner = null;
   const _listenOnTiles = () => {
     const tiles = document.querySelectorAll(".square");
     tiles.forEach((tile, index) =>
       tile.addEventListener("click", function onTileClick() {
         const board = getBoard();
         _currentPlayer = getCurrentPlayer();
+        //prevent user from playing if there's winner
+        if (isGameOver()) {
+          return;
+        }
         //if tile has not been marked update
         if (!board[index]) {
           setBoard(_currentPlayer.mark, index);
           updateBoard();
+          checkForWinner();
           checkBoardState();
-          if (checkForWinner()) {
+          if (isGameOver()) {
             endGame();
           } else {
             nextPlayerTurn();
