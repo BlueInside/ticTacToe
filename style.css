@@ -1,6 +1,25 @@
 body {
   background-color: peachpuff;
 }
+.menu {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+  justify-items: center;
+}
+.score-table {
+  display: grid;
+  grid-template-columns: 300px 300px;
+  justify-items: center;
+}
+
+.start-button {
+}
+.display {
+  color: #2a8d89;
+  font-size: 28px;
+}
 .wrapper {
   display: grid;
   grid-template-columns: 600px;
