@@ -1,30 +1,46 @@
 const Gameboard = (() => {
-  const _board = ["", "", "", "", "", "", "", "", ""];
+  let _board = ["", "", "", "", "", "", "", "", ""];
 
   const setBoard = (mark, index) => {
     _board[index] = mark;
   };
 
   const getBoard = () => _board;
-
+  const restartBoard = () => {
+    _board = ["", "", "", "", "", "", "", "", ""];
+  };
   return {
     setBoard,
     getBoard,
+    restartBoard,
   };
 })();
 const Player = (mark, name) => {
-  return { mark, name };
+  let _score = 0;
+  const setScore = (point) => (_score += point);
+  const getScore = () => _score;
+  return { mark, name, setScore, getScore };
 };
 
 const Game = (() => {
   const _player1 = Player("X", "player1");
   const _player2 = Player("0", "player2");
   let _currentPlayer = null || _player1;
+  let _gameOver = false;
+  const _checkBoardState = () => {};
+
+  const startGameBtn = document.querySelector(".start-game-btn");
+  function startGame() {
+    Gameboard.restartBoard();
+    DisplayController.updateBoard();
+  }
+  startGameBtn.addEventListener("click", startGame);
+
   const getCurrentPlayer = () => _currentPlayer;
   const nextPlayerTurn = () => {
     _currentPlayer = _currentPlayer === _player2 ? _player1 : _player2;
   };
-  // we'll have buttons that let players type in names and show who's move
+
   const playGame = (player1, player2) => {
     // while(!gameOver)
     {
@@ -68,5 +84,3 @@ const DisplayController = (() => {
 
   return { updateBoard };
 })();
-
-DisplayController.updateBoard();
