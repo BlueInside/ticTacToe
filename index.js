@@ -19,27 +19,33 @@ const Player = (mark, name) => {
 const Game = (() => {
   const _player1 = Player("X", "player1");
   const _player2 = Player("0", "player2");
-  const _gameOver = false;
-  let currentPlayer = _player1;
+  let _currentPlayer = null || _player1;
+  const getCurrentPlayer = () => _currentPlayer;
+  const nextPlayerTurn = () => {
+    _currentPlayer = _currentPlayer === _player2 ? _player1 : _player2;
+  };
   // we'll have buttons that let players type in names and show who's move
   const playGame = (player1, player2) => {
     // while(!gameOver)
     {
     }
   };
-  return { currentPlayer };
+  return { getCurrentPlayer, nextPlayerTurn };
 })();
 
 const DisplayController = (() => {
   const _board = document.querySelector(".game-board");
-  const player = Game.currentPlayer;
+  const { getCurrentPlayer, nextPlayerTurn } = Game;
+  const { setBoard } = Gameboard;
+  let _currentPlayer = null;
   const _listenOnTiles = () => {
     const tiles = document.querySelectorAll(".square");
     tiles.forEach((tile, index) =>
       tile.addEventListener("click", function onTileClick() {
-        Gameboard.setBoard(player.mark, index);
+        _currentPlayer = getCurrentPlayer();
+        setBoard(_currentPlayer.mark, index);
         updateBoard();
-        console.log(Gameboard.getBoard());
+        nextPlayerTurn();
       })
     );
   };
