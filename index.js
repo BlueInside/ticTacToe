@@ -6,13 +6,13 @@ const Gameboard = (() => {
   };
 
   const getBoard = () => _board;
-  const restartBoard = () => {
+  const resetBoard = () => {
     _board = ["", "", "", "", "", "", "", "", ""];
   };
   return {
     setBoard,
     getBoard,
-    restartBoard,
+    resetBoard,
   };
 })();
 
@@ -28,12 +28,16 @@ const Game = (() => {
   const _player2 = Player("0", "player2");
   let _currentPlayer = null || _player1;
   let _gameOver = false;
-  let _board = null;
   const checkBoardState = () => {
-    _board = Gameboard.getBoard();
-    const isEveryTileMarked = _board.every((tile) => {
+    board = Gameboard.getBoard();
+    const isEveryTileMarked = board.every((tile) => {
       return tile;
     });
+
+    const isWinner = () => {
+      //Check for winner in tic tac toe game;
+      //-- 3 same symbols in row vertical horizontal or diagonally
+    };
 
     if (isEveryTileMarked) {
       _gameOver = true;
@@ -48,7 +52,7 @@ const Game = (() => {
   };
 
   function startGame() {
-    Gameboard.restartBoard();
+    Gameboard.resetBoard();
     DisplayController.updateBoard();
   }
   startGameBtn.addEventListener("click", startGame);
@@ -64,23 +68,27 @@ const Game = (() => {
 const DisplayController = (() => {
   const _board = document.querySelector(".game-board");
   const { getCurrentPlayer, nextPlayerTurn, checkBoardState } = Game;
-  const { setBoard } = Gameboard;
+  const { setBoard, getBoard } = Gameboard;
   let _currentPlayer = null;
   const _listenOnTiles = () => {
     const tiles = document.querySelectorAll(".square");
     tiles.forEach((tile, index) =>
       tile.addEventListener("click", function onTileClick() {
+        const board = getBoard();
         _currentPlayer = getCurrentPlayer();
-        setBoard(_currentPlayer.mark, index);
-        updateBoard();
-        nextPlayerTurn();
-        checkBoardState();
+        //if tile has not been marked update
+        if (!board[index]) {
+          setBoard(_currentPlayer.mark, index);
+          updateBoard();
+          nextPlayerTurn();
+          checkBoardState();
+        }
       })
     );
   };
 
   function _populateBoard(element, index) {
-    //refresh board on first iteration
+    //clean board on first iteration
     if (index === 0) _board.innerHTML = "";
     const tile = document.createElement("div");
     tile.classList.add("square");
