@@ -41,6 +41,7 @@ const Game = (() => {
     }
   }
   const checkForWinner = () => {
+    const board = Gameboard.getBoard();
     //Check for winner in tic tac toe game;
     //-- 3 same symbols in row vertical horizontal or diagonally
     const topRow = board.slice(0, 3);
@@ -67,7 +68,7 @@ const Game = (() => {
   };
 
   const checkBoardState = () => {
-    board = Gameboard.getBoard();
+    const board = Gameboard.getBoard();
     const isEveryTileMarked = board.every((tile) => {
       return tile;
     });
@@ -79,21 +80,22 @@ const Game = (() => {
   };
 
   const startGameBtn = document.querySelector(".start-game-btn");
-
+  startGameBtn.addEventListener("click", startGame);
   const endGame = () => {
     const { updateScoreBoard } = DisplayController;
     if (_gameOver) {
       updateScoreBoard(_currentPlayer);
+      startGame();
     }
   };
 
   function startGame() {
     const { resetBoard } = Gameboard;
+    if (_gameOver) _gameOver = false;
     if (_currentPlayer) _currentPlayer = _player1;
     resetBoard();
     DisplayController.updateBoard();
   }
-  startGameBtn.addEventListener("click", startGame);
 
   const getCurrentPlayer = () => _currentPlayer;
   const nextPlayerTurn = () => {
@@ -111,8 +113,13 @@ const Game = (() => {
 
 const DisplayController = (() => {
   const _board = document.querySelector(".game-board");
-  const { getCurrentPlayer, nextPlayerTurn, checkBoardState, checkForWinner } =
-    Game;
+  const {
+    getCurrentPlayer,
+    nextPlayerTurn,
+    checkBoardState,
+    checkForWinner,
+    endGame,
+  } = Game;
   const { setBoard, getBoard } = Gameboard;
   let _currentPlayer = null;
   const _listenOnTiles = () => {
@@ -125,8 +132,12 @@ const DisplayController = (() => {
         if (!board[index]) {
           setBoard(_currentPlayer.mark, index);
           updateBoard();
-          nextPlayerTurn();
           checkBoardState();
+          if (checkForWinner()) {
+            endGame();
+          } else {
+            nextPlayerTurn();
+          }
         }
       })
     );
@@ -145,7 +156,7 @@ const DisplayController = (() => {
   function updateScoreBoard(player) {
     const playerScore = document.querySelector(`.${player.name}-score`);
     player.addScore(1);
-    playerScore.innerHTML += ` ${player.getScore()}`;
+    playerScore.textContent += ` ${"X"}`;
   }
 
   const updateBoard = () => {
