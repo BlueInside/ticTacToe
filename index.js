@@ -18,9 +18,9 @@ const Gameboard = (() => {
 
 const Player = (mark, name) => {
   let _score = 0;
-  const setScore = (point) => (_score += point);
+  const addScore = (point) => (_score += point);
   const getScore = () => _score;
-  return { mark, name, setScore, getScore };
+  return { mark, name, addScore, getScore };
 };
 
 const Game = (() => {
@@ -33,7 +33,9 @@ const Game = (() => {
     for (let array of arrays) {
       const isWinner = array.every((mark) => mark === symbol);
       if (isWinner) {
-        console.log(`yes there's match in ARRAY:${array}`);
+        console.log(
+          `yes there's match in ARRAY:${array} Player ${_currentPlayer}`
+        );
         _gameOver = true;
       }
     }
@@ -61,6 +63,7 @@ const Game = (() => {
     ];
     _checkAllRows(allRows, "X");
     _checkAllRows(allRows, "O");
+    return _gameOver;
   };
 
   const checkBoardState = () => {
@@ -70,6 +73,7 @@ const Game = (() => {
     });
 
     if (isEveryTileMarked) {
+      console.log(`all tiles are marked!`);
       _gameOver = true;
     }
   };
@@ -77,12 +81,16 @@ const Game = (() => {
   const startGameBtn = document.querySelector(".start-game-btn");
 
   const endGame = () => {
+    const { updateScoreBoard } = DisplayController;
     if (_gameOver) {
+      updateScoreBoard(_currentPlayer);
     }
   };
 
   function startGame() {
-    Gameboard.resetBoard();
+    const { resetBoard } = Gameboard;
+    if (_currentPlayer) _currentPlayer = _player1;
+    resetBoard();
     DisplayController.updateBoard();
   }
   startGameBtn.addEventListener("click", startGame);
@@ -92,12 +100,19 @@ const Game = (() => {
     _currentPlayer = _currentPlayer === _player2 ? _player1 : _player2;
   };
 
-  return { getCurrentPlayer, nextPlayerTurn, checkBoardState, checkForWinner };
+  return {
+    getCurrentPlayer,
+    nextPlayerTurn,
+    checkBoardState,
+    checkForWinner,
+    endGame,
+  };
 })();
 
 const DisplayController = (() => {
   const _board = document.querySelector(".game-board");
-  const { getCurrentPlayer, nextPlayerTurn, checkBoardState } = Game;
+  const { getCurrentPlayer, nextPlayerTurn, checkBoardState, checkForWinner } =
+    Game;
   const { setBoard, getBoard } = Gameboard;
   let _currentPlayer = null;
   const _listenOnTiles = () => {
@@ -127,11 +142,17 @@ const DisplayController = (() => {
     _board.appendChild(tile);
   }
 
+  function updateScoreBoard(player) {
+    const playerScore = document.querySelector(`.${player.name}-score`);
+    player.addScore(1);
+    playerScore.innerHTML += ` ${player.getScore()}`;
+  }
+
   const updateBoard = () => {
     const board = Gameboard.getBoard();
     board.forEach((e, i) => _populateBoard(e, i));
     _listenOnTiles();
   };
 
-  return { updateBoard };
+  return { updateBoard, updateScoreBoard };
 })();
