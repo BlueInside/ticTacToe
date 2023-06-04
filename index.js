@@ -28,16 +28,35 @@ const Game = (() => {
   const _player2 = Player("0", "player2");
   let _currentPlayer = null || _player1;
   let _gameOver = false;
+
+  const isWinner = () => {
+    //Check for winner in tic tac toe game;
+    //-- 3 same symbols in row vertical horizontal or diagonally
+    const topRow = board.slice(0, 3);
+    const middleRow = board.slice(3, 6);
+    const bottomRow = board.slice(6, 9);
+    const diagonallyUP = [board[2], board[4], board[6]];
+    const diagonallyDown = [board[0], board[4], board[8]];
+    const firstCol = [board[0], board[3], board[6]];
+    const secondCol = [board[1], board[4], board[7]];
+    const thirdCol = [board[3], board[5], board[8]];
+    return [
+      topRow,
+      middleRow,
+      bottomRow,
+      diagonallyUP,
+      diagonallyDown,
+      firstCol,
+      secondCol,
+      thirdCol,
+    ];
+  };
+
   const checkBoardState = () => {
     board = Gameboard.getBoard();
     const isEveryTileMarked = board.every((tile) => {
       return tile;
     });
-
-    const isWinner = () => {
-      //Check for winner in tic tac toe game;
-      //-- 3 same symbols in row vertical horizontal or diagonally
-    };
 
     if (isEveryTileMarked) {
       _gameOver = true;
@@ -62,7 +81,7 @@ const Game = (() => {
     _currentPlayer = _currentPlayer === _player2 ? _player1 : _player2;
   };
 
-  return { getCurrentPlayer, nextPlayerTurn, checkBoardState };
+  return { getCurrentPlayer, nextPlayerTurn, checkBoardState, isWinner };
 })();
 
 const DisplayController = (() => {
@@ -105,3 +124,14 @@ const DisplayController = (() => {
 
   return { updateBoard };
 })();
+
+const allArrays = Game.isWinner;
+function checkAllArays(allArrays) {
+  for (let array of allArrays) {
+    const isWinner = array.every((mark) => mark === "X" || mark === "O");
+    if (isWinner) console.log(`yes there's match in ARRAY:${array}`);
+    else {
+      console.log(`No there's no match in ARRAY:${array}`);
+    }
+  }
+}
