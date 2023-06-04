@@ -83,6 +83,9 @@ const Game = (() => {
 
   const startGameBtn = document.querySelector(".start-game-btn");
   startGameBtn.addEventListener("click", startGame);
+  const nextRoundBtn = document.querySelector(".next-round");
+  nextRoundBtn.addEventListener("click", playNextRound);
+
   const endGame = () => {
     const { updateScoreBoard } = DisplayController;
     if (_gameOver) {
@@ -97,7 +100,12 @@ const Game = (() => {
     resetBoard();
     DisplayController.updateBoard();
   }
-
+  function playNextRound() {
+    const { hideDisplay, showHideNextRndBtn } = DisplayController;
+    startGame();
+    hideDisplay();
+    showHideNextRndBtn();
+  }
   const getCurrentPlayer = () => _currentPlayer;
   const nextPlayerTurn = () => {
     _currentPlayer = _currentPlayer === _player2 ? _player1 : _player2;
@@ -126,6 +134,7 @@ const DisplayController = (() => {
   const { setBoard, getBoard } = Gameboard;
   let _currentPlayer = null;
   let _isWinner = null;
+  const _display = document.querySelector(".display");
   const _listenOnTiles = () => {
     const tiles = document.querySelectorAll(".square");
     tiles.forEach((tile, index) =>
@@ -161,11 +170,19 @@ const DisplayController = (() => {
     tile.innerHTML = `${element}`;
     _board.appendChild(tile);
   }
-
+  function hideDisplay() {
+    _display.textContent = ``;
+  }
+  function showHideNextRndBtn() {
+    const nextRoundBtn = document.querySelector(".next-round");
+    nextRoundBtn.classList.toggle("hidden");
+  }
   function updateScoreBoard(player) {
     const playerScore = document.querySelector(`.${player.name}-score`);
     player.addScore(1);
     playerScore.textContent += ` ${"X"}`;
+    _display.textContent = `${player.name.toUpperCase()} wins this round!`;
+    showHideNextRndBtn();
   }
 
   const updateBoard = () => {
@@ -174,5 +191,5 @@ const DisplayController = (() => {
     _listenOnTiles();
   };
 
-  return { updateBoard, updateScoreBoard };
+  return { updateBoard, updateScoreBoard, hideDisplay, showHideNextRndBtn };
 })();
