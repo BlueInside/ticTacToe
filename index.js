@@ -25,11 +25,20 @@ const Player = (mark, name) => {
 
 const Game = (() => {
   const _player1 = Player("X", "player1");
-  const _player2 = Player("0", "player2");
+  const _player2 = Player("O", "player2");
   let _currentPlayer = null || _player1;
   let _gameOver = false;
 
-  const isWinner = () => {
+  function _checkAllRows(arrays, symbol) {
+    for (let array of arrays) {
+      const isWinner = array.every((mark) => mark === symbol);
+      if (isWinner) {
+        console.log(`yes there's match in ARRAY:${array}`);
+        _gameOver = true;
+      }
+    }
+  }
+  const checkForWinner = () => {
     //Check for winner in tic tac toe game;
     //-- 3 same symbols in row vertical horizontal or diagonally
     const topRow = board.slice(0, 3);
@@ -39,8 +48,8 @@ const Game = (() => {
     const diagonallyDown = [board[0], board[4], board[8]];
     const firstCol = [board[0], board[3], board[6]];
     const secondCol = [board[1], board[4], board[7]];
-    const thirdCol = [board[3], board[5], board[8]];
-    return [
+    const thirdCol = [board[2], board[5], board[8]];
+    const allRows = [
       topRow,
       middleRow,
       bottomRow,
@@ -50,6 +59,8 @@ const Game = (() => {
       secondCol,
       thirdCol,
     ];
+    _checkAllRows(allRows, "X");
+    _checkAllRows(allRows, "O");
   };
 
   const checkBoardState = () => {
@@ -81,7 +92,7 @@ const Game = (() => {
     _currentPlayer = _currentPlayer === _player2 ? _player1 : _player2;
   };
 
-  return { getCurrentPlayer, nextPlayerTurn, checkBoardState, isWinner };
+  return { getCurrentPlayer, nextPlayerTurn, checkBoardState, checkForWinner };
 })();
 
 const DisplayController = (() => {
@@ -124,14 +135,3 @@ const DisplayController = (() => {
 
   return { updateBoard };
 })();
-
-const allArrays = Game.isWinner;
-function checkAllArays(allArrays) {
-  for (let array of allArrays) {
-    const isWinner = array.every((mark) => mark === "X" || mark === "O");
-    if (isWinner) console.log(`yes there's match in ARRAY:${array}`);
-    else {
-      console.log(`No there's no match in ARRAY:${array}`);
-    }
-  }
-}
