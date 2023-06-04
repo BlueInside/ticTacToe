@@ -15,6 +15,7 @@ const Gameboard = (() => {
     restartBoard,
   };
 })();
+
 const Player = (mark, name) => {
   let _score = 0;
   const setScore = (point) => (_score += point);
@@ -27,9 +28,25 @@ const Game = (() => {
   const _player2 = Player("0", "player2");
   let _currentPlayer = null || _player1;
   let _gameOver = false;
-  const _checkBoardState = () => {};
+  let _board = null;
+  const checkBoardState = () => {
+    _board = Gameboard.getBoard();
+    const isEveryTileMarked = _board.every((tile) => {
+      return tile;
+    });
+
+    if (isEveryTileMarked) {
+      _gameOver = true;
+    }
+  };
 
   const startGameBtn = document.querySelector(".start-game-btn");
+
+  const endGame = () => {
+    if (_gameOver) {
+    }
+  };
+
   function startGame() {
     Gameboard.restartBoard();
     DisplayController.updateBoard();
@@ -41,17 +58,12 @@ const Game = (() => {
     _currentPlayer = _currentPlayer === _player2 ? _player1 : _player2;
   };
 
-  const playGame = (player1, player2) => {
-    // while(!gameOver)
-    {
-    }
-  };
-  return { getCurrentPlayer, nextPlayerTurn };
+  return { getCurrentPlayer, nextPlayerTurn, checkBoardState };
 })();
 
 const DisplayController = (() => {
   const _board = document.querySelector(".game-board");
-  const { getCurrentPlayer, nextPlayerTurn } = Game;
+  const { getCurrentPlayer, nextPlayerTurn, checkBoardState } = Game;
   const { setBoard } = Gameboard;
   let _currentPlayer = null;
   const _listenOnTiles = () => {
@@ -62,6 +74,7 @@ const DisplayController = (() => {
         setBoard(_currentPlayer.mark, index);
         updateBoard();
         nextPlayerTurn();
+        checkBoardState();
       })
     );
   };
