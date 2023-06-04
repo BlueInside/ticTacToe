@@ -14,8 +14,8 @@ body {
   justify-items: center;
 }
 
-.start-button {
-}
+/* .start-button {
+} */
 .display {
   color: #2a8d89;
   font-size: 28px;
@@ -40,4 +40,7 @@ body {
   border: 1px black solid;
   height: 200px;
   box-sizing: border-box;
+}
+.hidden {
+  display: none;
 }
