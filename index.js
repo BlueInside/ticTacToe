@@ -28,6 +28,7 @@ const Game = (() => {
   const _player2 = Player("O", "player2");
   let _currentPlayer = null || _player1;
   let _gameOver = false;
+  let _isTie = false;
 
   function _checkAllRows(arrays, symbol) {
     for (let array of arrays) {
@@ -42,6 +43,9 @@ const Game = (() => {
   }
   function isGameOver() {
     return _gameOver;
+  }
+  function isTie() {
+    return _isTie;
   }
   const checkForWinner = () => {
     const board = Gameboard.getBoard();
@@ -77,7 +81,7 @@ const Game = (() => {
 
     if (isEveryTileMarked) {
       console.log(`all tiles are marked!`);
-      _gameOver = true;
+      _isTie = true;
     }
   };
 
@@ -91,11 +95,16 @@ const Game = (() => {
     if (_gameOver) {
       updateScoreBoard(_currentPlayer);
     }
+    if (_isTie) {
+      // HERE
+      updateScoreBoard();
+    }
   };
 
   function startGame() {
     const { resetBoard } = Gameboard;
     if (_gameOver) _gameOver = false;
+    if (_isTie) _isTie = false;
     if (_currentPlayer) _currentPlayer = _player1;
     resetBoard();
     DisplayController.updateBoard();
@@ -118,6 +127,7 @@ const Game = (() => {
     checkForWinner,
     endGame,
     isGameOver,
+    isTie,
   };
 })();
 
@@ -130,6 +140,7 @@ const DisplayController = (() => {
     checkForWinner,
     endGame,
     isGameOver,
+    isTie,
   } = Game;
   const { setBoard, getBoard } = Gameboard;
   let _currentPlayer = null;
@@ -151,7 +162,7 @@ const DisplayController = (() => {
           updateBoard();
           checkForWinner();
           checkBoardState();
-          if (isGameOver()) {
+          if (isGameOver() || isTie()) {
             endGame();
           } else {
             nextPlayerTurn();
@@ -178,11 +189,16 @@ const DisplayController = (() => {
     nextRoundBtn.classList.toggle("hidden");
   }
   function updateScoreBoard(player) {
-    const playerScore = document.querySelector(`.${player.name}-score`);
-    player.addScore(1);
-    playerScore.textContent += ` ${"X"}`;
-    _display.textContent = `${player.name.toUpperCase()} wins this round!`;
-    showHideNextRndBtn();
+    if (!player) {
+      _display.textContent = `It's a tie`;
+      showHideNextRndBtn();
+    } else {
+      const playerScore = document.querySelector(`.${player.name}-score`);
+      player.addScore(1);
+      playerScore.textContent += ` ${"X"}`;
+      _display.textContent = `${player.name.toUpperCase()} wins this round!`;
+      showHideNextRndBtn();
+    }
   }
 
   const updateBoard = () => {
