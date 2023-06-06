@@ -20,7 +20,8 @@ const Player = (mark, name) => {
   let _score = 0;
   const addScore = (point) => (_score += point);
   const getScore = () => _score;
-  return { mark, name, addScore, getScore };
+  const resetScore = () => (_score = 0);
+  return { mark, name, addScore, getScore, resetScore };
 };
 
 const Game = (() => {
@@ -86,7 +87,7 @@ const Game = (() => {
   };
 
   const startGameBtn = document.querySelector(".start-game-btn");
-  startGameBtn.addEventListener("click", startGame);
+  startGameBtn.addEventListener("click", newGame);
   const nextRoundBtn = document.querySelector(".next-round");
   nextRoundBtn.addEventListener("click", playNextRound);
 
@@ -94,26 +95,38 @@ const Game = (() => {
     const { updateScoreBoard } = DisplayController;
     if (_gameOver) {
       updateScoreBoard(_currentPlayer);
-    }
-    if (_isTie) {
-      // HERE
+    } else if (_isTie) {
       updateScoreBoard();
     }
   };
 
   function startGame() {
     const { resetBoard } = Gameboard;
+    const { resetScoreBoard, updateBoard, hideDisplay, showHideNextRndBtn } =
+      DisplayController;
+
     if (_gameOver) _gameOver = false;
     if (_isTie) _isTie = false;
     if (_currentPlayer) _currentPlayer = _player1;
     resetBoard();
-    DisplayController.updateBoard();
+    updateBoard();
+    hideDisplay();
   }
   function playNextRound() {
-    const { hideDisplay, showHideNextRndBtn } = DisplayController;
+    const { showHideNextRndBtn } = DisplayController;
     startGame();
-    hideDisplay();
     showHideNextRndBtn();
+  }
+  function newGame() {
+    const { resetScoreBoard, showHideNextRndBtn } = DisplayController;
+    const isNextRoundBtnHidden = document
+      .querySelector(".next-round")
+      .classList.contains("hidden");
+    if (!isNextRoundBtnHidden) {
+      showHideNextRndBtn();
+    }
+    startGame();
+    resetScoreBoard(_player1, _player2);
   }
   const getCurrentPlayer = () => _currentPlayer;
   const nextPlayerTurn = () => {
@@ -144,7 +157,7 @@ const DisplayController = (() => {
   } = Game;
   const { setBoard, getBoard } = Gameboard;
   let _currentPlayer = null;
-  let _isWinner = null;
+  // let _isWinner = null;
   const _display = document.querySelector(".display");
   const _listenOnTiles = () => {
     const tiles = document.querySelectorAll(".square");
@@ -196,18 +209,39 @@ const DisplayController = (() => {
       const playerScore = document.querySelector(`.${player.name}-score`);
       player.addScore(1);
       playerScore.textContent += ` ${"X"}`;
+      if (player.getScore() === 3) {
+        displayWinner(player);
+        return;
+      }
       _display.textContent = `${player.name.toUpperCase()} wins this round!`;
       showHideNextRndBtn();
     }
   }
-
+  function displayWinner(player) {
+    _display.textContent = `${player.name.toUpperCase()} WON the game`;
+  }
+  function resetScoreBoard(player1, player2) {
+    const player1Score = document.querySelector(`.player1-score`);
+    const player2Score = document.querySelector(`.player2-score`);
+    player1Score.innerText = "Player1 Score:";
+    player2Score.innerText = "Player2 Score:";
+    _display.innerText = "";
+    player1.resetScore();
+    player2.resetScore();
+  }
   const updateBoard = () => {
     const board = Gameboard.getBoard();
     board.forEach((e, i) => _populateBoard(e, i));
     _listenOnTiles();
   };
 
-  return { updateBoard, updateScoreBoard, hideDisplay, showHideNextRndBtn };
+  return {
+    updateBoard,
+    updateScoreBoard,
+    hideDisplay,
+    showHideNextRndBtn,
+    resetScoreBoard,
+  };
 })();
 
 //display next round button, last thing i done
