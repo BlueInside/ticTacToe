@@ -243,8 +243,3 @@ const DisplayController = (() => {
     resetScoreBoard,
   };
 })();
-
-//display next round button, last thing i done
-//TODO
-// tie when it's draw (no scores) display message it's tie
-// when any player reach 3 points stop game completely display winner
