@@ -1,10 +1,8 @@
 # TicTacToe
-
-## This is a browser version of Tic Tac Toe game from The Odin Project curriculum.
-
 [link Live preview of the project is here.](https://blueinside.github.io/ticTacToe/)
 
 ## Overview
+- This is a browser version of Tic Tac Toe game from The Odin Project curriculum.
 ## Features:
 - Play against another human being a tic-tac-toe game. (play against AI will be added in future)
 - You play best of three.
