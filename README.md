@@ -12,7 +12,7 @@
 - Linux terminal
 - Git and GitHub
 
-##Outcome:
+## Outcome:
 - Deepened knowledge of DOM manipulation
 - Learned more about objects, factory functions and module pattern
 - Improved understanding of scope and closures
